@@ -84,6 +84,21 @@ describe("MyProfileHeaderMyCollectionAndSavedWorks", () => {
       expect(navigate).toHaveBeenCalledWith("/my-profile/settings")
     })
 
+    it("Shows the explanatory banner if the profile is empty", async () => {
+      const { findByText } = getWrapper({
+        Me: () => ({
+          name: "My Name",
+          profession: null,
+          bio: "null",
+          icon: null,
+          otherRelevantPositions: null,
+        }),
+      })
+
+      await flushPromiseQueue()
+      expect(await findByText("Why complete your Colletor Profile?")).toBeTruthy()
+    })
+
     it("Header shows the right text", async () => {
       const { findByText } = getWrapper({
         Me: () => ({
