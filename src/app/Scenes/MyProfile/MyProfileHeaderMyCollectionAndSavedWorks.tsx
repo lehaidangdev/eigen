@@ -1,4 +1,5 @@
 import { OwnerType } from "@artsy/cohesion"
+import AsyncStorage from "@react-native-async-storage/async-storage"
 import { useNavigation } from "@react-navigation/native"
 import { MyProfileHeaderMyCollectionAndSavedWorks_me } from "__generated__/MyProfileHeaderMyCollectionAndSavedWorks_me.graphql"
 import { MyProfileHeaderMyCollectionAndSavedWorksQuery } from "__generated__/MyProfileHeaderMyCollectionAndSavedWorksQuery.graphql"
@@ -13,6 +14,7 @@ import { ProvideScreenTrackingWithCohesionSchema } from "app/utils/track"
 import { screen } from "app/utils/track/helpers"
 import {
   Avatar,
+  Banner,
   Box,
   BriefcaseIcon,
   Button,
@@ -24,7 +26,7 @@ import {
   Text,
   useColor,
 } from "palette"
-import React, { useContext } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { createRefetchContainer, QueryRenderer } from "react-relay"
 import { graphql } from "relay-runtime"
 import { FavoriteArtworksQueryRenderer } from "../Favorites/FavoriteArtworks"
@@ -63,18 +65,34 @@ export const MyProfileHeaderMyCollectionAndSavedWorks: React.FC<{
 }
 
 export const LOCAL_PROFILE_ICON_PATH_KEY = "LOCAL_PROFILE_ICON_PATH_KEY"
+export const HAS_SEEN_COLLECTOR_PROFILE_EXPLANATORY_BANNER =
+  "HAS_SEEN_COLLECTOR_PROFILE_EXPLANATORY_BANNER"
 
 export const MyProfileHeader: React.FC<{ me: MyProfileHeaderMyCollectionAndSavedWorks_me }> = ({
   me,
 }) => {
   const color = useColor()
   const navigation = useNavigation()
+  const [showCollectorProfileExplanatoryBanner, setShowCollectorProfileExplanatoryBanner] =
+    useState(false)
 
   const showCollectorProfile = useFeatureFlag("AREnableCollectorProfile")
 
   const { localImage } = useContext(MyProfileContext)
 
   const userProfileImagePath = localImage || me?.icon?.url
+
+  const hasSeenTheBanner = async () =>
+    await AsyncStorage.getItem(HAS_SEEN_COLLECTOR_PROFILE_EXPLANATORY_BANNER)
+
+  const collectorProfileIsEmpty =
+    !me.bio && !me.icon && !me.profession && !me.otherRelevantPositions
+
+  useEffect(() => {
+    hasSeenTheBanner().then((hasSeen) => {
+      setShowCollectorProfileExplanatoryBanner(!hasSeen && collectorProfileIsEmpty)
+    })
+  }, [])
 
   return (
     <>
@@ -85,6 +103,20 @@ export const MyProfileHeader: React.FC<{ me: MyProfileHeaderMyCollectionAndSaved
           navigate("/my-profile/settings")
         }}
       />
+      {showCollectorProfileExplanatoryBanner && (
+        <Banner
+          title="Why complete your Colletor Profile?"
+          text="A complete profile helps you build a relationship with sellers. Select “Edit Profile” to see which details are shared when you contact sellers."
+          showCloseButton
+          containerStyle={{ mb: 2, backgroundColor: color("black5") }}
+          titleStyle={{ variant: "xs", color: color("black100") }}
+          bodyTextStyle={{ variant: "xs", color: color("black60") }}
+          onClose={() =>
+            AsyncStorage.setItem(HAS_SEEN_COLLECTOR_PROFILE_EXPLANATORY_BANNER, "true")
+          }
+        />
+      )}
+
       <Flex flexDirection="row" alignItems="center" px={2}>
         <Box
           height="99"
