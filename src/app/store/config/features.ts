@@ -188,6 +188,11 @@ export const features = defineFeatures({
     description: "Enable Crossplatform Map Screen",
     showInAdminMenu: true,
   },
+  ARShowCollectorProfileExplanatoryBanner: {
+    readyForRelease: true,
+    description: "Show Collector Profile Explanatory Banner",
+    showInAdminMenu: true,
+  },
 })
 
 export interface DevToggleDescriptor {
