@@ -85,11 +85,16 @@ describe("MyProfileHeaderMyCollectionAndSavedWorks", () => {
     })
 
     it("Shows the explanatory banner if the profile is empty", async () => {
+      beforeEach(() => {
+        __globalStoreTestUtils__?.injectFeatureFlags({
+          ARShowCollectorProfileExplanatoryBanner: false,
+        })
+      })
       const { findByText } = getWrapper({
         Me: () => ({
           name: "My Name",
           profession: null,
-          bio: "null",
+          bio: null,
           icon: null,
           otherRelevantPositions: null,
         }),
