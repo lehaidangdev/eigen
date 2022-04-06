@@ -103,7 +103,7 @@ export const MyProfileHeader: React.FC<{ me: MyProfileHeaderMyCollectionAndSaved
           navigate("/my-profile/settings")
         }}
       />
-      {showCollectorProfileExplanatoryBanner && (
+      {showCollectorProfile && showCollectorProfileExplanatoryBanner && (
         <Banner
           title="Why complete your Colletor Profile?"
           text="A complete profile helps you build a relationship with sellers. Select “Edit Profile” to see which details are shared when you contact sellers."
