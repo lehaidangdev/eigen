@@ -84,7 +84,7 @@ export const MyProfileHeader: React.FC<{ me: MyProfileHeaderMyCollectionAndSaved
 
   const userProfileImagePath = localImage || me?.icon?.url
 
-  const collectorProfileIsEmpty =
+  const collectorProfileIsNotComplete =
     !me.bio || !me.icon || !me.profession || !me.otherRelevantPositions
 
   useEffect(() => {
@@ -93,7 +93,7 @@ export const MyProfileHeader: React.FC<{ me: MyProfileHeaderMyCollectionAndSaved
 
   const showBanner =
     showCollectorProfileExplanatoryBannerFeatureFlag &&
-    collectorProfileIsEmpty &&
+    collectorProfileIsNotComplete &&
     showCollectorProfileExplanatoryBanner
 
   return (
