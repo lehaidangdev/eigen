@@ -85,7 +85,7 @@ export const MyProfileHeader: React.FC<{ me: MyProfileHeaderMyCollectionAndSaved
   const userProfileImagePath = localImage || me?.icon?.url
 
   const collectorProfileIsEmpty =
-    !me.bio && !me.icon && !me.profession && !me.otherRelevantPositions
+    !me.bio || !me.icon || !me.profession || !me.otherRelevantPositions
 
   useEffect(() => {
     setVisualClueAsSeen("CollectorProfileExplanatoryBanner")
