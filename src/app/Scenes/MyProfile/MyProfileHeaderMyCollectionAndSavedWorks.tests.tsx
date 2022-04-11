@@ -84,26 +84,6 @@ describe("MyProfileHeaderMyCollectionAndSavedWorks", () => {
       expect(navigate).toHaveBeenCalledWith("/my-profile/settings")
     })
 
-    it("Shows the explanatory banner if the profile is empty", async () => {
-      beforeEach(() => {
-        __globalStoreTestUtils__?.injectFeatureFlags({
-          ARShowCollectorProfileExplanatoryBanner: false,
-        })
-      })
-      const { findByText } = getWrapper({
-        Me: () => ({
-          name: "My Name",
-          profession: null,
-          bio: null,
-          icon: null,
-          otherRelevantPositions: null,
-        }),
-      })
-
-      await flushPromiseQueue()
-      expect(await findByText("Why complete your Colletor Profile?")).toBeTruthy()
-    })
-
     it("Header shows the right text", async () => {
       const { findByText } = getWrapper({
         Me: () => ({
@@ -120,6 +100,48 @@ describe("MyProfileHeaderMyCollectionAndSavedWorks", () => {
       expect(await findByText("My Name")).toBeTruthy()
       expect(await findByText(`Member since ${year}`)).toBeTruthy()
       expect(await findByText("My Bio")).toBeTruthy()
+    })
+
+    describe("Explanatory banner", () => {
+      it("Get displayed if at least one of the fields is empty,", async () => {
+        beforeEach(() => {
+          __globalStoreTestUtils__?.injectFeatureFlags({
+            ARShowCollectorProfileExplanatoryBanner: false,
+          })
+        })
+        const { findByText } = getWrapper({
+          Me: () => ({
+            name: "My Name",
+            profession: null,
+            bio: "some-bio",
+            icon: "icon",
+            otherRelevantPositions: "something",
+          }),
+        })
+
+        await flushPromiseQueue()
+        expect(await findByText("Why complete your Colletor Profile?")).toBeTruthy()
+      })
+
+      it("Doesnt get displayed if none of fields are empty", async () => {
+        beforeEach(() => {
+          __globalStoreTestUtils__?.injectFeatureFlags({
+            ARShowCollectorProfileExplanatoryBanner: false,
+          })
+        })
+        const { queryByText } = getWrapper({
+          Me: () => ({
+            name: "My Name",
+            profession: "some-profession",
+            bio: "some-bio",
+            icon: "some-icon",
+            otherRelevantPositions: "something",
+          }),
+        })
+
+        await flushPromiseQueue()
+        expect(await queryByText("Why complete your Colletor Profile?")).toBeFalsy()
+      })
     })
 
     it("Renders Icon", async () => {
